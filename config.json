@@ -1,0 +1,128 @@
+{
+  "target_audience": {
+    "age_range": "30-50岁",
+    "english_level": "零基础/低起点",
+    "learning_goal": "实用口语交流",
+    "preferred_style": "生活化、温馨、易懂",
+    "pain_points": [
+      "单词记不住",
+      "语法太复杂",
+      "发音不标准",
+      "学了不会用"
+    ]
+  },
+  "video_settings": {
+    "duration_seconds": 30,
+    "duration_range": "20-30秒",
+    "aspect_ratio": "16:9",
+    "resolution": "1080p",
+    "style": "温馨暖色调",
+    "model_description": {
+      "ethnicity": "欧美",
+      "age": "20-28岁",
+      "gender": "女性",
+      "hair": "金发或棕发",
+      "expression": "亲切微笑",
+      "clothing": "米色/浅蓝色/浅粉色休闲服装"
+    },
+    "scene_settings": {
+      "lighting": "暖色调柔光",
+      "color_palette": ["米白", "浅黄", "暖橙", "淡粉"],
+      "background_style": "生活化场景",
+      "avoid": ["冷冰冰的办公室", "正式会议室", "工业风格"]
+    }
+  },
+  "cover_settings": {
+    "aspect_ratio": "9:16",
+    "title_position": "底部",
+    "color_scheme": "暖色调",
+    "font_style": "粗体中文",
+    "highlight_color": "#FF6B35",
+    "text_shadow": true,
+    "composition": "人物占画面上半部分，底部1/3留白"
+  },
+  "content_categories": [
+    {
+      "id": "daily",
+      "name": "生活口语",
+      "description": "日常实用英语表达",
+      "examples": ["餐厅点餐", "购物", "问路", "打电话"],
+      "difficulty": "入门",
+      "frequency": "每周2次"
+    },
+    {
+      "id": "travel",
+      "name": "旅游口语",
+      "description": "出国旅游必备英语",
+      "examples": ["机场用语", "酒店入住", "景点游览", "紧急情况"],
+      "difficulty": "入门",
+      "frequency": "每周2次"
+    },
+    {
+      "id": "business",
+      "name": "职场口语",
+      "description": "商务沟通技巧",
+      "examples": ["会议发言", "邮件写作", "电话沟通", "商务接待"],
+      "difficulty": "进阶",
+      "frequency": "每周1次"
+    },
+    {
+      "id": "idioms",
+      "name": "英语习语",
+      "description": "地道英语表达",
+      "examples": ["常用习语", "俚语", "谚语", "固定搭配"],
+      "difficulty": "进阶",
+      "frequency": "每周1次"
+    },
+    {
+      "id": "culture",
+      "name": "节日文化",
+      "description": "西方节日与文化知识",
+      "examples": ["圣诞节", "感恩节", "万圣节", "情人节"],
+      "difficulty": "入门",
+      "frequency": "每周1次"
+    },
+    {
+      "id": "grammar",
+      "name": "语法知识点",
+      "description": "实用语法讲解",
+      "examples": ["时态", "介词", "固定搭配", "常用句型"],
+      "difficulty": "进阶",
+      "frequency": "每周1次"
+    }
+  ],
+  "jimeng_api": {
+    "base_url": "http://localhost:8000",
+    "token": "d56a24782ccca71a48f6449e67990550",
+    "image_model": "jimeng-image-4.0",
+    "video_model": "jimeng-video-3.0-pro",
+    "project_path": "/Users/xdf/jimeng-free-api-all"
+  },
+  "dingtalk": {
+    "webhook_url": "",
+    "secret": "",
+    "at_mobiles": [],
+    "is_at_all": false
+  },
+  "production_schedule": {
+    "daily_count": 4,
+    "schedule_time": "09:00",
+    "auto_push": true,
+    "timezone": "Asia/Shanghai",
+    "weekly_distribution": {
+      "周一": ["生活口语", "旅游口语"],
+      "周二": ["职场口语", "英语习语"],
+      "周三": ["生活口语", "节日文化"],
+      "周四": ["旅游口语", "语法知识点"],
+      "周五": ["生活口语", "英语习语"],
+      "周六": ["旅游口语", "职场口语"],
+      "周日": ["节日文化", "语法知识点"]
+    }
+  },
+  "output_settings": {
+    "save_directory": "./output/edu-videos",
+    "naming_pattern": "{date}_{category}_{title}",
+    "backup_enabled": true,
+    "backup_directory": "./output/edu-videos/backup"
+  }
+}
