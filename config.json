@@ -124,5 +124,16 @@
     "naming_pattern": "{date}_{category}_{title}",
     "backup_enabled": true,
     "backup_directory": "./output/edu-videos/backup"
+  },
+  "character_reference": {
+    "enabled": false,
+    "image_path": "",
+    "image_url": "",
+    "description": "人物参考图配置，用于保持视频中人物形象一致",
+    "max_images": 9,
+    "supported_formats": ["jpg", "jpeg", "png", "webp"],
+    "max_file_size_mb": 30,
+    "reference_syntax": "@图片1",
+    "notes": "上传人物参考图后，提示词中使用 @图片1 引用"
   }
 }

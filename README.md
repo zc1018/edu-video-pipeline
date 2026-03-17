@@ -7,10 +7,11 @@
 本系统是一个完整的AI驱动教育短视频生产流水线，能够：
 
 1. **自动生成教案** - 针对零基础人群设计20-30秒知识点
-2. **生成视频提示词** - 调用 seedance skill 生成专业的 Seedance 2.0 视频提示词
-3. **AI视频生成** - 使用即梦AI生成温馨暖色调教育视频
-4. **封面图生成** - 生成生活化封面 + 醒目中文标题
-5. **自动推送** - 通过Webhook发送结果到钉钉
+2. **人物一致性** - 支持上传人物参考图，确保视频中人物形象统一
+3. **生成视频提示词** - 调用 seedance skill 生成专业的 Seedance 2.0 视频提示词
+4. **AI视频生成** - 使用即梦AI生成温馨暖色调教育视频（支持多模态参考）
+5. **封面图生成** - 生成生活化封面 + 醒目中文标题
+6. **自动推送** - 通过Webhook发送结果到钉钉
 
 ## 📁 项目结构
 
@@ -92,11 +93,45 @@ pm2 start daily-scheduler.js --name edu-video-scheduler
 # 单个视频（需要先创建教案JSON文件）
 node scripts/generate-video.js ./scripts/教案文件.json
 
+# 使用人物参考图生成视频
+node scripts/generate-video.js ./scripts/教案文件.json ./assets/character.png
+
 # 批量生成4个视频
 node scripts/batch-generate.js
 
 # 定时调度（每天自动）
 node scripts/daily-scheduler.js
+```
+
+### 方式3：使用人物参考图（保持形象一致）
+
+**步骤1：准备人物参考图**
+- 图片要求：jpg/png格式，单张 < 30MB
+- 图片内容：清晰的正面照或半身照，背景简洁
+- 保存路径：`./assets/character.png`
+
+**步骤2：配置config.json**
+```json
+{
+  "character_reference": {
+    "enabled": true,
+    "image_path": "./assets/character.png"
+  }
+}
+```
+
+**步骤3：生成视频**
+```bash
+# 使用配置文件中的参考图
+node scripts/generate-video.js ./scripts/教案文件.json
+
+# 或临时指定参考图
+node scripts/generate-video.js ./scripts/教案文件.json /path/to/character.png
+```
+
+**提示词中使用：**
+```
+人物：@图片1 人物形象，教师装扮...
 ```
 
 ## 🎨 内容主题
@@ -150,23 +185,48 @@ node scripts/daily-scheduler.js
 }
 ```
 
+### 人物参考图 (character_reference)
+
+```json
+{
+  "enabled": true,             // 是否启用人物参考图
+  "image_path": "./assets/character.png",  // 参考图路径
+  "description": "人物参考图配置，用于保持视频中人物形象一致",
+  "max_images": 9,             // 最多支持9张图片
+  "supported_formats": ["jpg", "jpeg", "png", "webp"],
+  "max_file_size_mb": 30,      // 单张图片最大30MB
+  "reference_syntax": "@图片1" // 提示词中引用方式
+}
+```
+
 ## 💡 提示词设计原则
 
 ### 视频提示词关键要素
 
-1. **人物一致性**
-   - 欧美年轻女性，20-28岁
-   - 金发或棕发，亲切微笑
-   - 米色/浅蓝色休闲服装
+#### 1. 人物设置（两种方式）
 
-2. **场景要求**
+**方式A：纯文本描述（无人参考图）**
+```
+人物：欧美年轻女性，20-28岁，金发或棕发，亲切微笑，
+穿着米色/浅蓝色休闲服装
+```
+
+**方式B：使用人物参考图（推荐）**
+```
+人物：@图片1 人物形象，教师装扮，笑容亲切自然
+```
+
+#### 2. 场景要求
    - 生活化场景（咖啡厅、客厅、书房）
    - 暖色调灯光（米白、浅黄、暖橙）
    - 避免冷冰冰的商务办公室
 
-3. **镜头设计**
-   - 0-5秒：中景开场
-   - 5-10秒：近景讲解
+#### 3. 镜头设计
+   - 0-3秒：中景开场
+   - 3-6秒：近景讲解
+   - 6-9秒：特写展示
+   - 9-12秒：中景演示
+   - 12-15秒：全景结尾
    - 10-15秒：特写展示
    - 15-20秒：中景演示
    - 20-30秒：全景总结

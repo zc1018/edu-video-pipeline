@@ -59,20 +59,50 @@ function startJimengService() {
 }
 
 /**
- * 生成视频
+ * 生成视频（支持人物参考图）
+ * @param {string} prompt - 视频提示词
+ * @param {number} duration - 视频时长（秒）
+ * @param {string} characterImagePath - 人物参考图路径（可选）
  */
-async function generateVideo(prompt, duration = 30) {
+async function generateVideo(prompt, duration = 10, characterImagePath = null) {
   console.log('🎬 开始生成视频...');
 
-  const requestBody = {
-    model: JIMENG_API.video_model,
-    messages: [
-      {
-        role: 'user',
-        content: `${prompt}, ${duration}秒`
-      }
-    ]
-  };
+  let requestBody;
+
+  // 如果有人物参考图，使用多模态格式
+  if (characterImagePath && fs.existsSync(characterImagePath)) {
+    console.log(`📸 使用人物参考图: ${characterImagePath}`);
+
+    // 读取图片并转为 base64
+    const imageBuffer = fs.readFileSync(characterImagePath);
+    const base64Image = imageBuffer.toString('base64');
+    const mimeType = path.extname(characterImagePath).toLowerCase() === '.png' ? 'image/png' : 'image/jpeg';
+    const dataUrl = `data:${mimeType};base64,${base64Image}`;
+
+    requestBody = {
+      model: JIMENG_API.video_model,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: `${prompt}, ${duration}秒` },
+            { type: 'image_url', image_url: { url: dataUrl } }
+          ]
+        }
+      ]
+    };
+  } else {
+    // 纯文本提示词
+    requestBody = {
+      model: JIMENG_API.video_model,
+      messages: [
+        {
+          role: 'user',
+          content: `${prompt}, ${duration}秒`
+        }
+      ]
+    };
+  }
 
   try {
     const response = await fetch(`${JIMENG_API.base_url}/v1/chat/completions`, {
@@ -224,10 +254,12 @@ async function main() {
   // 获取命令行参数
   const args = process.argv.slice(2);
   const scriptFile = args[0];
+  const characterImagePath = args[1] || CONFIG.character_reference?.image_path || null;
 
   if (!scriptFile) {
-    console.error('使用方法: node generate-video.js <script-file>');
-    console.error('示例: node generate-video.js ./scripts/example-script.json');
+    console.error('使用方法: node generate-video.js <script-file> [character-image-path]');
+    console.error('示例: node generate-video.js ./scripts/example-script.json ./assets/character.png');
+    console.error('或:  node generate-video.js ./scripts/example-script.json (使用config.json中配置的参考图)');
     process.exit(1);
   }
 
@@ -243,6 +275,17 @@ async function main() {
   console.log(`🎬 开始生产视频: ${script.title}`);
   console.log(`📂 主题类型: ${script.category}`);
 
+  // 显示人物参考图信息
+  if (characterImagePath) {
+    if (fs.existsSync(characterImagePath)) {
+      console.log(`📸 人物参考图: ${characterImagePath}`);
+    } else {
+      console.warn(`⚠️ 人物参考图不存在: ${characterImagePath}`);
+    }
+  } else {
+    console.log('ℹ️ 未使用人物参考图，将使用默认人物描述');
+  }
+
   // 检查/启动服务
   const isRunning = await checkJimengService();
   if (!isRunning) {
@@ -254,8 +297,8 @@ async function main() {
   }
 
   try {
-    // 生成视频
-    const videoUrl = await generateVideo(script.videoPrompt, script.duration);
+    // 生成视频（支持人物参考图）
+    const videoUrl = await generateVideo(script.videoPrompt, script.duration, characterImagePath);
     console.log(`🎥 视频: ${videoUrl}`);
 
     // 生成封面
